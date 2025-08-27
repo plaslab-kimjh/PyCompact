@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: If you use PyCompact, please cite the repository and the SoftwareX article (when available).
+type: software
+title: PyCompact — Open‑source DEM–MPFEM workflow for powder compaction
+version: "1.0.0"
+date-released: 2025-08-19
+repository-code: https://github.com/plaslab-kimjh/PyCompact
+license: MIT
+authors:
+  - given-names: Majid
+    family-names: Mohammadhosseinzadeh
+    affiliation: School of Mechanical Engineering, Pusan National University
+  - given-names: Hossein
+    family-names: Ghorbani-Menghari
+    affiliation: School of Mechanical Engineering, Pusan National University
+  - given-names: Ji Hoon
+    family-names: Kim
+    affiliation: School of Mechanical Engineering, Pusan National University
+    email: kimjh@pusan.ac.kr
+identifiers: []
+preferred-citation:
+  type: article
+  title: "PyCompact: A Fully Open‑source Workflow for Discrete Element Method–Multi‑Particle Finite Element Method for Powder Compaction Simulation"
+  authors:
+    - family-names: Mohammadhosseinzadeh
+      given-names: Majid
+    - family-names: Ghorbani-Menghari
+      given-names: Hossein
+    - family-names: Kim
+      given-names: Ji Hoon
+  journal: SoftwareX
+  year: 
+  start: 
+  end: 
+  doi: 
+  url: https://github.com/plaslab-kimjh/PyCompact
