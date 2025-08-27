@@ -1,0 +1,357 @@
+###################################Header for General commands#######################################################
+
+atom_style	granular		#Simulation of particles
+
+boundary	f f f			#fixed boundaries -> particles will be deleted if leaving the simulation box
+
+units		cgs
+
+communicate	single vel yes	#default
+
+newton		off				#default
+
+
+region		reg block  0.0 0.1 0.0 0.1  0.0 0.15 units box
+create_box	2 reg
+
+neighbor	0.01 bin
+neigh_modify	delay 0
+
+variable natoms equal 2 	#1 -> particle #2->Die
+
+####variable for material properties####
+
+####Young Modulus####
+variable	youngmodulus1	equal 	5.e9		#
+variable	youngmodulus2	equal 	5.e9		#
+
+####Poission ratio####
+variable 	poission1	equal	0.4
+variable 	poission2	equal	0.4
+
+####variable for contact properties####
+
+####coefficient of restitution####
+variable	CoR11	equal	0.5
+variable	CoR12	equal	0.5
+variable	CoR21	equal	0.5
+variable	CoR22	equal	0.5
+
+####sliding friction coefficient####
+variable	sf11	equal	0.7
+variable	sf12	equal	0.7
+variable	sf21	equal	0.7
+variable	sf22	equal	0.0
+
+####rolling friction coefficient####
+variable	rf11	equal	0.05
+variable	rf12	equal	0.05
+variable	rf21	equal	0.05
+variable	rf22	equal	0.05
+
+#Material properties required for new pair styles
+
+fix 		m1 all property/global youngsModulus peratomtype ${youngmodulus1} ${youngmodulus2}
+
+fix 		m2 all property/global poissonsRatio peratomtype ${poission1} ${poission2}
+
+fix 		m3 all property/global coefficientRestitution peratomtypepair ${natoms} 0.5 0.5 0.5 0.5
+
+fix 		m4 all property/global coefficientFriction peratomtypepair ${natoms} ${sf11} ${sf12} ${sf21} ${sf22}
+
+fix 		m5 all property/global coefficientRollingFriction peratomtypepair ${natoms} ${rf11} ${rf12} ${rf21} ${rf22}
+
+
+#New pair style
+pair_style gran model hertz tangential history #Hertzian without cohesion
+pair_coeff	* *
+
+
+timestep	0.00001
+
+####settle time####
+
+variable	settletime	equal	0.1 #second
+
+variable	settlesteps	equal	${settletime}/0.00001
+
+fix		gravi all gravity 120000 vector 0.0 0.0 -1.0
+
+#granular walls
+fix     die all mesh/surface file meshes/Die.stl type 2 scale 0.1 
+
+fix		insertionsface all mesh/surface/planar file meshes/Insertionsface.stl type 1  scale 0.1
+
+fix wall all wall/gran model hertz tangential history mesh n_meshes 1 meshes die 
+
+
+#distributions for insertion
+fix		pts1 all particletemplate/sphere 32452909 atom_type 1 density constant 30000 radius constant 0.00481
+fix		pts2 all particletemplate/sphere 32452919 atom_type 1 density constant 30000 radius constant 0.00483
+fix		pts3 all particletemplate/sphere 32452921 atom_type 1 density constant 30000 radius constant 0.00484
+fix		pts4 all particletemplate/sphere 32452997 atom_type 1 density constant 30000 radius constant 0.00486
+fix		pts5 all particletemplate/sphere 32453011 atom_type 1 density constant 30000 radius constant 0.0049
+fix		pts6 all particletemplate/sphere 32453021 atom_type 1 density constant 30000 radius constant 0.00494
+fix		pts7 all particletemplate/sphere 32453027 atom_type 1 density constant 30000 radius constant 0.005
+fix		pts8 all particletemplate/sphere 32453039 atom_type 1 density constant 30000 radius constant 0.00502
+fix		pts9 all particletemplate/sphere 32453081 atom_type 1 density constant 30000 radius constant 0.00504
+fix		pts10 all particletemplate/sphere 32453087 atom_type 1 density constant 30000 radius constant 0.00505
+fix		pts11 all particletemplate/sphere 32453101 atom_type 1 density constant 30000 radius constant 0.00506
+fix		pts12 all particletemplate/sphere 32453123 atom_type 1 density constant 30000 radius constant 0.00509
+fix		pts13 all particletemplate/sphere 32453129 atom_type 1 density constant 30000 radius constant 0.0051
+fix		pts14 all particletemplate/sphere 32453147 atom_type 1 density constant 30000 radius constant 0.00511
+fix		pts15 all particletemplate/sphere 32453149 atom_type 1 density constant 30000 radius constant 0.00512
+fix		pts16 all particletemplate/sphere 32453167 atom_type 1 density constant 30000 radius constant 0.00513
+fix		pts17 all particletemplate/sphere 32453173 atom_type 1 density constant 30000 radius constant 0.00514
+fix		pts18 all particletemplate/sphere 32453191 atom_type 1 density constant 30000 radius constant 0.00515
+fix		pts19 all particletemplate/sphere 32453203 atom_type 1 density constant 30000 radius constant 0.00517
+fix		pts20 all particletemplate/sphere 32453209 atom_type 1 density constant 30000 radius constant 0.00519
+fix		pts21 all particletemplate/sphere 32453251 atom_type 1 density constant 30000 radius constant 0.0052
+fix		pts22 all particletemplate/sphere 32453257 atom_type 1 density constant 30000 radius constant 0.00521
+fix		pts23 all particletemplate/sphere 32453269 atom_type 1 density constant 30000 radius constant 0.00525
+fix		pts24 all particletemplate/sphere 32453287 atom_type 1 density constant 30000 radius constant 0.00526
+fix		pts25 all particletemplate/sphere 32453293 atom_type 1 density constant 30000 radius constant 0.00527
+fix		pts26 all particletemplate/sphere 32453297 atom_type 1 density constant 30000 radius constant 0.00528
+fix		pts27 all particletemplate/sphere 32453321 atom_type 1 density constant 30000 radius constant 0.00529
+fix		pts28 all particletemplate/sphere 32453327 atom_type 1 density constant 30000 radius constant 0.0053
+fix		pts29 all particletemplate/sphere 32453339 atom_type 1 density constant 30000 radius constant 0.00531
+fix		pts30 all particletemplate/sphere 32453353 atom_type 1 density constant 30000 radius constant 0.00532
+fix		pts31 all particletemplate/sphere 32453371 atom_type 1 density constant 30000 radius constant 0.00533
+fix		pts32 all particletemplate/sphere 32453401 atom_type 1 density constant 30000 radius constant 0.00537
+fix		pts33 all particletemplate/sphere 32453419 atom_type 1 density constant 30000 radius constant 0.00538
+fix		pts34 all particletemplate/sphere 32453423 atom_type 1 density constant 30000 radius constant 0.00539
+fix		pts35 all particletemplate/sphere 32453429 atom_type 1 density constant 30000 radius constant 0.0054
+fix		pts36 all particletemplate/sphere 32453431 atom_type 1 density constant 30000 radius constant 0.00541
+fix		pts37 all particletemplate/sphere 32453441 atom_type 1 density constant 30000 radius constant 0.00542
+fix		pts38 all particletemplate/sphere 32453467 atom_type 1 density constant 30000 radius constant 0.00543
+fix		pts39 all particletemplate/sphere 32453489 atom_type 1 density constant 30000 radius constant 0.00544
+fix		pts40 all particletemplate/sphere 32453513 atom_type 1 density constant 30000 radius constant 0.00545
+fix		pts41 all particletemplate/sphere 32453521 atom_type 1 density constant 30000 radius constant 0.00546
+fix		pts42 all particletemplate/sphere 32453563 atom_type 1 density constant 30000 radius constant 0.00547
+fix		pts43 all particletemplate/sphere 32453573 atom_type 1 density constant 30000 radius constant 0.00548
+fix		pts44 all particletemplate/sphere 32453579 atom_type 1 density constant 30000 radius constant 0.00549
+fix		pts45 all particletemplate/sphere 32453587 atom_type 1 density constant 30000 radius constant 0.0055
+fix		pts46 all particletemplate/sphere 32453609 atom_type 1 density constant 30000 radius constant 0.00551
+fix		pts47 all particletemplate/sphere 32453633 atom_type 1 density constant 30000 radius constant 0.00552
+fix		pts48 all particletemplate/sphere 32453657 atom_type 1 density constant 30000 radius constant 0.00553
+fix		pts49 all particletemplate/sphere 32453677 atom_type 1 density constant 30000 radius constant 0.00554
+fix		pts50 all particletemplate/sphere 32453711 atom_type 1 density constant 30000 radius constant 0.00556
+fix		pts51 all particletemplate/sphere 32453723 atom_type 1 density constant 30000 radius constant 0.00557
+fix		pts52 all particletemplate/sphere 32453749 atom_type 1 density constant 30000 radius constant 0.00558
+fix		pts53 all particletemplate/sphere 32453791 atom_type 1 density constant 30000 radius constant 0.0056
+fix		pts54 all particletemplate/sphere 32453801 atom_type 1 density constant 30000 radius constant 0.00561
+fix		pts55 all particletemplate/sphere 32453803 atom_type 1 density constant 30000 radius constant 0.00562
+fix		pts56 all particletemplate/sphere 32453831 atom_type 1 density constant 30000 radius constant 0.00563
+fix		pts57 all particletemplate/sphere 32453857 atom_type 1 density constant 30000 radius constant 0.00564
+fix		pts58 all particletemplate/sphere 32453893 atom_type 1 density constant 30000 radius constant 0.00565
+fix		pts59 all particletemplate/sphere 32453909 atom_type 1 density constant 30000 radius constant 0.00568
+fix		pts60 all particletemplate/sphere 32453951 atom_type 1 density constant 30000 radius constant 0.0057
+fix		pts61 all particletemplate/sphere 32453983 atom_type 1 density constant 30000 radius constant 0.00572
+fix		pts62 all particletemplate/sphere 32453999 atom_type 1 density constant 30000 radius constant 0.00573
+fix		pts63 all particletemplate/sphere 32454047 atom_type 1 density constant 30000 radius constant 0.00574
+fix		pts64 all particletemplate/sphere 32454089 atom_type 1 density constant 30000 radius constant 0.00575
+fix		pts65 all particletemplate/sphere 32454101 atom_type 1 density constant 30000 radius constant 0.00576
+fix		pts66 all particletemplate/sphere 32454113 atom_type 1 density constant 30000 radius constant 0.00577
+fix		pts67 all particletemplate/sphere 32454119 atom_type 1 density constant 30000 radius constant 0.00578
+fix		pts68 all particletemplate/sphere 32454187 atom_type 1 density constant 30000 radius constant 0.00579
+fix		pts69 all particletemplate/sphere 32454193 atom_type 1 density constant 30000 radius constant 0.0058
+fix		pts70 all particletemplate/sphere 32454199 atom_type 1 density constant 30000 radius constant 0.00581
+fix		pts71 all particletemplate/sphere 32454211 atom_type 1 density constant 30000 radius constant 0.00584
+fix		pts72 all particletemplate/sphere 32454221 atom_type 1 density constant 30000 radius constant 0.00585
+fix		pts73 all particletemplate/sphere 32454239 atom_type 1 density constant 30000 radius constant 0.00586
+fix		pts74 all particletemplate/sphere 32454251 atom_type 1 density constant 30000 radius constant 0.00587
+fix		pts75 all particletemplate/sphere 32454263 atom_type 1 density constant 30000 radius constant 0.00588
+fix		pts76 all particletemplate/sphere 32454269 atom_type 1 density constant 30000 radius constant 0.00589
+fix		pts77 all particletemplate/sphere 32454283 atom_type 1 density constant 30000 radius constant 0.0059
+fix		pts78 all particletemplate/sphere 32454287 atom_type 1 density constant 30000 radius constant 0.00592
+fix		pts79 all particletemplate/sphere 32454319 atom_type 1 density constant 30000 radius constant 0.00593
+fix		pts80 all particletemplate/sphere 32454347 atom_type 1 density constant 30000 radius constant 0.00594
+fix		pts81 all particletemplate/sphere 32454397 atom_type 1 density constant 30000 radius constant 0.00595
+fix		pts82 all particletemplate/sphere 32454407 atom_type 1 density constant 30000 radius constant 0.00596
+fix		pts83 all particletemplate/sphere 32454437 atom_type 1 density constant 30000 radius constant 0.00597
+fix		pts84 all particletemplate/sphere 32454481 atom_type 1 density constant 30000 radius constant 0.00598
+fix		pts85 all particletemplate/sphere 32454503 atom_type 1 density constant 30000 radius constant 0.00599
+fix		pts86 all particletemplate/sphere 32454511 atom_type 1 density constant 30000 radius constant 0.006
+fix		pts87 all particletemplate/sphere 32454523 atom_type 1 density constant 30000 radius constant 0.00601
+fix		pts88 all particletemplate/sphere 32454533 atom_type 1 density constant 30000 radius constant 0.00602
+fix		pts89 all particletemplate/sphere 32454553 atom_type 1 density constant 30000 radius constant 0.00603
+fix		pts90 all particletemplate/sphere 32454571 atom_type 1 density constant 30000 radius constant 0.00604
+fix		pts91 all particletemplate/sphere 32454589 atom_type 1 density constant 30000 radius constant 0.00605
+fix		pts92 all particletemplate/sphere 32454593 atom_type 1 density constant 30000 radius constant 0.00606
+fix		pts93 all particletemplate/sphere 32454607 atom_type 1 density constant 30000 radius constant 0.00607
+fix		pts94 all particletemplate/sphere 32454629 atom_type 1 density constant 30000 radius constant 0.00608
+fix		pts95 all particletemplate/sphere 32454647 atom_type 1 density constant 30000 radius constant 0.00609
+fix		pts96 all particletemplate/sphere 32454671 atom_type 1 density constant 30000 radius constant 0.0061
+fix		pts97 all particletemplate/sphere 32454691 atom_type 1 density constant 30000 radius constant 0.00611
+fix		pts98 all particletemplate/sphere 32454713 atom_type 1 density constant 30000 radius constant 0.00612
+fix		pts99 all particletemplate/sphere 32454727 atom_type 1 density constant 30000 radius constant 0.00613
+fix		pts100 all particletemplate/sphere 32454749 atom_type 1 density constant 30000 radius constant 0.00614
+fix		pts101 all particletemplate/sphere 32454757 atom_type 1 density constant 30000 radius constant 0.00615
+fix		pts102 all particletemplate/sphere 32454761 atom_type 1 density constant 30000 radius constant 0.00616
+fix		pts103 all particletemplate/sphere 32454781 atom_type 1 density constant 30000 radius constant 0.00617
+fix		pts104 all particletemplate/sphere 32454787 atom_type 1 density constant 30000 radius constant 0.00618
+fix		pts105 all particletemplate/sphere 32454791 atom_type 1 density constant 30000 radius constant 0.0062
+fix		pts106 all particletemplate/sphere 32454797 atom_type 1 density constant 30000 radius constant 0.00621
+fix		pts107 all particletemplate/sphere 32454811 atom_type 1 density constant 30000 radius constant 0.00622
+fix		pts108 all particletemplate/sphere 32454827 atom_type 1 density constant 30000 radius constant 0.00624
+fix		pts109 all particletemplate/sphere 32454839 atom_type 1 density constant 30000 radius constant 0.00626
+fix		pts110 all particletemplate/sphere 32454847 atom_type 1 density constant 30000 radius constant 0.00627
+fix		pts111 all particletemplate/sphere 32454893 atom_type 1 density constant 30000 radius constant 0.00628
+fix		pts112 all particletemplate/sphere 32454899 atom_type 1 density constant 30000 radius constant 0.00629
+fix		pts113 all particletemplate/sphere 32454901 atom_type 1 density constant 30000 radius constant 0.0063
+fix		pts114 all particletemplate/sphere 32454913 atom_type 1 density constant 30000 radius constant 0.00631
+fix		pts115 all particletemplate/sphere 32454943 atom_type 1 density constant 30000 radius constant 0.00632
+fix		pts116 all particletemplate/sphere 32454949 atom_type 1 density constant 30000 radius constant 0.00633
+fix		pts117 all particletemplate/sphere 32454953 atom_type 1 density constant 30000 radius constant 0.00634
+fix		pts118 all particletemplate/sphere 32454959 atom_type 1 density constant 30000 radius constant 0.00635
+fix		pts119 all particletemplate/sphere 32455009 atom_type 1 density constant 30000 radius constant 0.00636
+fix		pts120 all particletemplate/sphere 32455019 atom_type 1 density constant 30000 radius constant 0.00637
+fix		pts121 all particletemplate/sphere 32455039 atom_type 1 density constant 30000 radius constant 0.00638
+fix		pts122 all particletemplate/sphere 32455043 atom_type 1 density constant 30000 radius constant 0.00639
+fix		pts123 all particletemplate/sphere 32455063 atom_type 1 density constant 30000 radius constant 0.0064
+fix		pts124 all particletemplate/sphere 32455079 atom_type 1 density constant 30000 radius constant 0.00641
+fix		pts125 all particletemplate/sphere 32455081 atom_type 1 density constant 30000 radius constant 0.00642
+fix		pts126 all particletemplate/sphere 32455121 atom_type 1 density constant 30000 radius constant 0.00643
+fix		pts127 all particletemplate/sphere 32455123 atom_type 1 density constant 30000 radius constant 0.00644
+fix		pts128 all particletemplate/sphere 32455177 atom_type 1 density constant 30000 radius constant 0.00645
+fix		pts129 all particletemplate/sphere 32455183 atom_type 1 density constant 30000 radius constant 0.00646
+fix		pts130 all particletemplate/sphere 32455201 atom_type 1 density constant 30000 radius constant 0.00647
+fix		pts131 all particletemplate/sphere 32455217 atom_type 1 density constant 30000 radius constant 0.00648
+fix		pts132 all particletemplate/sphere 32455237 atom_type 1 density constant 30000 radius constant 0.00649
+fix		pts133 all particletemplate/sphere 32455271 atom_type 1 density constant 30000 radius constant 0.0065
+fix		pts134 all particletemplate/sphere 32455273 atom_type 1 density constant 30000 radius constant 0.00651
+fix		pts135 all particletemplate/sphere 32455301 atom_type 1 density constant 30000 radius constant 0.00652
+fix		pts136 all particletemplate/sphere 32455303 atom_type 1 density constant 30000 radius constant 0.00653
+fix		pts137 all particletemplate/sphere 32455331 atom_type 1 density constant 30000 radius constant 0.00654
+fix		pts138 all particletemplate/sphere 32455337 atom_type 1 density constant 30000 radius constant 0.00656
+fix		pts139 all particletemplate/sphere 32455343 atom_type 1 density constant 30000 radius constant 0.00657
+fix		pts140 all particletemplate/sphere 32455349 atom_type 1 density constant 30000 radius constant 0.00658
+fix		pts141 all particletemplate/sphere 32455351 atom_type 1 density constant 30000 radius constant 0.00659
+fix		pts142 all particletemplate/sphere 32455361 atom_type 1 density constant 30000 radius constant 0.0066
+fix		pts143 all particletemplate/sphere 32455373 atom_type 1 density constant 30000 radius constant 0.00662
+fix		pts144 all particletemplate/sphere 32455391 atom_type 1 density constant 30000 radius constant 0.00663
+fix		pts145 all particletemplate/sphere 32455393 atom_type 1 density constant 30000 radius constant 0.00664
+fix		pts146 all particletemplate/sphere 32455399 atom_type 1 density constant 30000 radius constant 0.00665
+fix		pts147 all particletemplate/sphere 32455417 atom_type 1 density constant 30000 radius constant 0.00666
+fix		pts148 all particletemplate/sphere 32455429 atom_type 1 density constant 30000 radius constant 0.00667
+fix		pts149 all particletemplate/sphere 32455433 atom_type 1 density constant 30000 radius constant 0.00668
+fix		pts150 all particletemplate/sphere 32455453 atom_type 1 density constant 30000 radius constant 0.00669
+fix		pts151 all particletemplate/sphere 32455457 atom_type 1 density constant 30000 radius constant 0.0067
+fix		pts152 all particletemplate/sphere 32455463 atom_type 1 density constant 30000 radius constant 0.00671
+fix		pts153 all particletemplate/sphere 32455469 atom_type 1 density constant 30000 radius constant 0.00673
+fix		pts154 all particletemplate/sphere 32455471 atom_type 1 density constant 30000 radius constant 0.00674
+fix		pts155 all particletemplate/sphere 32455517 atom_type 1 density constant 30000 radius constant 0.00675
+fix		pts156 all particletemplate/sphere 32455519 atom_type 1 density constant 30000 radius constant 0.00676
+fix		pts157 all particletemplate/sphere 32455523 atom_type 1 density constant 30000 radius constant 0.00677
+fix		pts158 all particletemplate/sphere 32455531 atom_type 1 density constant 30000 radius constant 0.00678
+fix		pts159 all particletemplate/sphere 32455571 atom_type 1 density constant 30000 radius constant 0.00679
+fix		pts160 all particletemplate/sphere 32455589 atom_type 1 density constant 30000 radius constant 0.0068
+fix		pts161 all particletemplate/sphere 32455607 atom_type 1 density constant 30000 radius constant 0.00681
+fix		pts162 all particletemplate/sphere 32455639 atom_type 1 density constant 30000 radius constant 0.00682
+fix		pts163 all particletemplate/sphere 32455651 atom_type 1 density constant 30000 radius constant 0.00683
+fix		pts164 all particletemplate/sphere 32455679 atom_type 1 density constant 30000 radius constant 0.00686
+fix		pts165 all particletemplate/sphere 32455681 atom_type 1 density constant 30000 radius constant 0.00689
+fix		pts166 all particletemplate/sphere 32455693 atom_type 1 density constant 30000 radius constant 0.0069
+fix		pts167 all particletemplate/sphere 32455699 atom_type 1 density constant 30000 radius constant 0.00691
+fix		pts168 all particletemplate/sphere 32455751 atom_type 1 density constant 30000 radius constant 0.00692
+fix		pts169 all particletemplate/sphere 32455757 atom_type 1 density constant 30000 radius constant 0.00697
+fix		pts170 all particletemplate/sphere 32455763 atom_type 1 density constant 30000 radius constant 0.00698
+fix		pts171 all particletemplate/sphere 32455777 atom_type 1 density constant 30000 radius constant 0.00699
+fix		pts172 all particletemplate/sphere 32455799 atom_type 1 density constant 30000 radius constant 0.007
+fix		pts173 all particletemplate/sphere 32455847 atom_type 1 density constant 30000 radius constant 0.00702
+fix		pts174 all particletemplate/sphere 32455861 atom_type 1 density constant 30000 radius constant 0.00704
+fix		pts175 all particletemplate/sphere 32455867 atom_type 1 density constant 30000 radius constant 0.00705
+fix		pts176 all particletemplate/sphere 32455957 atom_type 1 density constant 30000 radius constant 0.00707
+fix		pts177 all particletemplate/sphere 32455979 atom_type 1 density constant 30000 radius constant 0.00708
+fix		pts178 all particletemplate/sphere 32455987 atom_type 1 density constant 30000 radius constant 0.00709
+fix		pts179 all particletemplate/sphere 32456003 atom_type 1 density constant 30000 radius constant 0.0071
+fix		pts180 all particletemplate/sphere 32456023 atom_type 1 density constant 30000 radius constant 0.00713
+fix		pts181 all particletemplate/sphere 32456029 atom_type 1 density constant 30000 radius constant 0.00717
+fix		pts182 all particletemplate/sphere 32456063 atom_type 1 density constant 30000 radius constant 0.00719
+fix		pts183 all particletemplate/sphere 32456069 atom_type 1 density constant 30000 radius constant 0.00723
+fix		pts184 all particletemplate/sphere 32456107 atom_type 1 density constant 30000 radius constant 0.00724
+fix		pts185 all particletemplate/sphere 32456117 atom_type 1 density constant 30000 radius constant 0.00728
+fix		pts186 all particletemplate/sphere 32456119 atom_type 1 density constant 30000 radius constant 0.00735
+fix		pts187 all particletemplate/sphere 32456129 atom_type 1 density constant 30000 radius constant 0.00736
+fix		pts188 all particletemplate/sphere 32456143 atom_type 1 density constant 30000 radius constant 0.00743
+fix		pts189 all particletemplate/sphere 32456183 atom_type 1 density constant 30000 radius constant 0.00751
+fix		pts190 all particletemplate/sphere 32456189 atom_type 1 density constant 30000 radius constant 0.00752
+fix		pts191 all particletemplate/sphere 32456219 atom_type 1 density constant 30000 radius constant 0.00756
+fix		pts192 all particletemplate/sphere 32456239 atom_type 1 density constant 30000 radius constant 0.00759
+fix		pts193 all particletemplate/sphere 32456257 atom_type 1 density constant 30000 radius constant 0.00762
+fix		pts194 all particletemplate/sphere 32456261 atom_type 1 density constant 30000 radius constant 0.00763
+fix		pts195 all particletemplate/sphere 32456267 atom_type 1 density constant 30000 radius constant 0.00766
+fix		pts196 all particletemplate/sphere 32456269 atom_type 1 density constant 30000 radius constant 0.00769
+fix		pts197 all particletemplate/sphere 32456279 atom_type 1 density constant 30000 radius constant 0.00773
+fix		pts198 all particletemplate/sphere 32456293 atom_type 1 density constant 30000 radius constant 0.0078
+fix		pts199 all particletemplate/sphere 32456317 atom_type 1 density constant 30000 radius constant 0.00782
+fix		pts200 all particletemplate/sphere 32456353 atom_type 1 density constant 30000 radius constant 0.00787
+fix		pts201 all particletemplate/sphere 32456371 atom_type 1 density constant 30000 radius constant 0.00799
+fix		pts202 all particletemplate/sphere 32456407 atom_type 1 density constant 30000 radius constant 0.00808
+fix		pts203 all particletemplate/sphere 32456441 atom_type 1 density constant 30000 radius constant 0.00811
+fix		pts204 all particletemplate/sphere 32456447 atom_type 1 density constant 30000 radius constant 0.00826
+fix		pdd1 all particledistribution/discrete 32452883 204 pts1 0.0011185931 pts2 0.0011326046 pts3 0.001139654 &
+        pts4 0.0023076807 pts5 0.0023651307 pts6 0.0012117632 pts7 0.001256455 pts8 0.0025431857 pts9 0.0025737036 &
+        pts10 0.0012945268 pts11 0.0026044646 pts12 0.0013255321 pts13 0.0013333601 pts14 0.0026824375 &
+        pts15 0.0013491083 pts16 0.0027140573 pts17 0.00136498 pts18 0.0013729623 pts19 0.0027780403 pts20 0.0014052028 &
+        pts21 0.001413341 pts22 0.0014215106 pts23 0.0014545037 pts24 0.0043884929 pts25 0.00294238 pts26 0.0014795808 &
+        pts27 0.0044640103 pts28 0.001496458 pts29 0.0015049445 pts30 0.003026926 pts31 0.0015220136 pts32 0.0046696145 &
+        pts33 0.0015652501 pts34 0.0047219835 pts35 0.0047483142 pts36 0.0047747426 pts37 0.001600423 pts38 0.0016092978 &
+        pts39 0.0016182053 pts40 0.0048814369 pts41 0.0016361188 pts42 0.00329025 pts43 0.0016541641 pts44 0.0066529451 &
+        pts45 0.0016723416 pts46 0.00168148 pts47 0.0033813034 pts48 0.0050995701 pts49 0.0051272851 pts50 0.003455344 &
+        pts51 0.0017370107 pts52 0.0052391492 pts53 0.0017652288 pts54 0.0035494045 pts55 0.0053526287 &
+        pts56 0.0017937508 pts57 0.0018033259 pts58 0.0018129351 pts59 0.0073678693 pts60 0.0074459733 &
+        pts61 0.0018811568 pts62 0.0018910403 pts63 0.0019009583 pts64 0.0057327329 pts65 0.0038417966 &
+        pts66 0.0038618407 pts67 0.0058229316 pts68 0.0097553446 pts69 0.0039223911 pts70 0.0059140715 pts71 0.004004105 &
+        pts72 0.0060370639 pts73 0.0040453841 pts74 0.0040661296 pts75 0.002043473 pts76 0.0020539166 pts77 0.0061931872 &
+        pts78 0.0041709217 pts79 0.0062881407 pts80 0.0042133375 pts81 0.0021173264 pts82 0.0085120798 &
+        pts83 0.0042774989 pts84 0.0042990299 pts85 0.0064809495 pts86 0.0065134626 pts87 0.0087281123 pts88 0.010964691 &
+        pts89 0.0022038846 pts90 0.0022148674 pts91 0.0066776599 pts92 0.011184712 pts93 0.0067441038 pts94 0.0045183269 &
+        pts95 0.002270329 pts96 0.009126125 pts97 0.0045855406 pts98 0.0046080924 pts99 0.0092614361 pts100 0.0023267088 &
+        pts101 0.0093523824 pts102 0.011747598 pts103 0.0023609806 pts104 0.0094899153 pts105 0.0023955872 &
+        pts106 0.0072215924 pts107 0.0096753807 pts108 0.0048845064 pts109 0.0024658117 pts110 0.0074329429 &
+        pts111 0.0024895213 pts112 0.0050028658 pts113 0.0025133824 pts114 0.0050507397 pts115 0.010149582 &
+        pts116 0.0050989182 pts117 0.0076846828 pts118 0.002573701 pts119 0.0051717588 pts120 0.0077942884 &
+        pts121 0.0052207025 pts122 0.0052452898 pts123 0.0026349771 pts124 0.010589391 pts125 0.0053195145 &
+        pts126 0.0080166162 pts127 0.0080540769 pts128 0.0080916542 pts129 0.0054195655 pts130 0.013611932 &
+        pts131 0.002735029 pts132 0.0082431322 pts133 0.0082812947 pts134 0.0055463833 pts135 0.0083579729 &
+        pts136 0.0027988296 pts137 0.008435123 pts138 0.0085127463 pts139 0.0085517359 pts140 0.0057272296 &
+        pts141 0.0086300719 pts142 0.0028898062 pts143 0.0087484707 pts144 0.0029293921 pts145 0.0029426672 &
+        pts146 0.0059119649 pts147 0.0029693378 pts148 0.0089481998 pts149 0.002996169 pts150 0.01203858 &
+        pts151 0.009069484 pts152 0.0091101543 pts153 0.0030639531 pts154 0.0061552628 pts155 0.0030913504 &
+        pts156 0.0062102202 pts157 0.0031189106 pts158 0.015663759 pts159 0.0031466341 pts160 0.0063211144 &
+        pts161 0.0095235641 pts162 0.0031885266 pts163 0.0064051459 pts164 0.012979838 pts165 0.0098631545 &
+        pts166 0.0033020541 pts167 0.0033164317 pts168 0.0066617019 pts169 0.0034035744 pts170 0.003418245 &
+        pts171 0.0034329576 pts172 0.010343137 pts173 0.0034773488 pts174 0.0035071545 pts175 0.003522121 &
+        pts176 0.0035521816 pts177 0.0071345517 pts178 0.010747238 pts179 0.0071951849 pts180 0.0072867774 &
+        pts181 0.0074101053 pts182 0.011208432 pts183 0.0075976941 pts184 0.0038146317 pts185 0.0038782076 &
+        pts186 0.0039911581 pts187 0.0080149415 pts188 0.0041229053 pts189 0.0042575203 pts190 0.0042745504 &
+        pts191 0.0043431248 pts192 0.0043950341 pts193 0.0044473554 pts194 0.0044648876 pts195 0.0045177607 &
+        pts196 0.0045710496 pts197 0.0046427511 pts198 0.0047700258 pts199 0.0048068124 pts200 0.0048996055 &
+        pts201 0.0051271645 pts202 0.0053023818 pts203 0.0053616626 pts204 0.0056647019
+#region for insertion
+group		nve_group region reg
+region		bc block 0.0025 0.095 0.0025 0.095 0.1 0.1 units box
+
+
+#particle insertion
+fix			ins nve_group insert/stream seed 32452867 distributiontemplate pdd1 &
+			maxattempt 1000 mass 50. massrate 20 overlapcheck yes vel constant 0. 0. -0.2&
+			insertion_face insertionsface extrude_length 0.04
+
+#apply nve integration to all particles that are inserted as single particles
+fix		integr nve_group nve/sphere
+
+
+#insert the first particles so that dump is not empty
+run			1
+dump		dmp all custom/vtk 200 DEM/generate_*.vtk id type type x y z ix iy iz vx vy vz fx fy fz mass radius 
+
+#insert particles
+run			50000 upto
+unfix		ins
+##################################RUN the simulation settling#############################################################
+
+run	 ${settlesteps}
+
+

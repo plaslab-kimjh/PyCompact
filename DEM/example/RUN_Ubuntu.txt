@@ -1,0 +1,10 @@
+##The following command is used to run the DEM simulation using Ubuntu
+
+cd ~/your path/....      
+chmod 644 in.generate
+ls -l in.generate
+lmp380 -in in.generate
+
+
+
+
